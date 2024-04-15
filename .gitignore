@@ -46,6 +46,7 @@
 auto-save-list
 tramp
 .\#*
+/bin
 
 # Org-mode
 .org-id-locations
