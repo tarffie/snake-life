@@ -1,8 +1,9 @@
-#include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <unistd.h>
+#include <fcntl.h>
+#include <iostream>
 #include <termios.h>
+#include <unistd.h>
 
 bool gameOver;
 const int width = 20;
@@ -24,50 +25,78 @@ void Setup () {
 }
 
 void Draw() {
-	clear();
-	for (int i = 0; i < width + 2 ; ++i)
-		mvprintw(0, i , "#");
-	for (int i = 0; i < height + 2 ; ++i)
-		mvprintw(0, i , "#");
-	for (int i = 0; i < width + 2 ; ++i)
-		mvprintw(height + 1, i , "#");
-	for (int i = 0; i < height + 2 ; ++i)
-		mvprintw(i , width + 1 ,"#");
-
-	// drawing the snake :)) 
-	mvprintw(y, x, "O");
-	for (int i = 0; i < nTail ; i++) {
-		mvprintw(tailY[i], tailX[i], "o");
+	system("clear");
+	for (int i = 0; i < width + 2; ++i) {
+		std::cout << "#";
 	}
+	std::cout << std::endl; 
 
-	mvprintw(fruitY, fruitX, "F");
-	mvprintw(height + 3, 0, "score: %d", score);
-	refresh();
+	for (int i = 0; i < height; ++i) {
+		for (int j = 0; j < width; ++j) {
+			if (j == 0) {
+				std::cout << "#";
+			}
+			if (i == y && j == x) {
+				std::cout << "0";
+			}
+			else if (i == fruitY && j == fruitX) {
+				std::cout << "F";
+			} 
+			else {
+				bool print = false;
+				for (int k =0; k < nTail ; ++k) {
+					if (tailX[k] == j && tailY[k] == i) {
+						std::cout << "o";
+						print = true;
+					}
+				}
+				if (!print) {
+					std::cout << " ";
+				}
+			}
+			if (j == width -1) {
+				std::cout << "#";
+			} 
+		}
+		std::cout << std::endl;
+	}
+	
+	for (int i = 0; i < width + 2; ++i) {
+		std::cout << "#";
+	}
+	std::cout << std::endl;
+	std::cout << "Score: " << score << std::endl;
+
 }
 
-void Input() {
-	keypad(stdscr, TRUE);
-	halfdelay(1);
-	int c = getch();
-	switch (c) {
-		case KEY_LEFT:
-		  dir = LEFT;
-		  break;
-		case KEY_RIGHT:
-		  dir = RIGHT;
-		  break;
-		case KEY_UP:
-		  dir = UP;
-		  break;
-		case KEY_DOWN:
-		  dir = DOWN;
-		  break;
-		case 'q':
-		  gameOver = true;
-		  break;
-	}
+void Input () {
+    struct termios oldt, newt;
+    char ch;
+    int oldf;
 
-} 
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    ch = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    if (ch == 'a')
+        dir = LEFT;
+    else if (ch == 'd')
+        dir = RIGHT;
+    else if (ch == 'w')
+        dir = UP;
+    else if (ch == 's')
+        dir = DOWN;
+    else if (ch == 'q')
+        gameOver = true;
+}
 
 void Logic() {
 	int prevY = tailY[0];
@@ -128,7 +157,6 @@ int main () {
 		Logic();
 		usleep(100000);
 	}
-	endwin();
 	return 0;
 }
 
