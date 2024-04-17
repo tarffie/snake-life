@@ -26,22 +26,20 @@ void Setup () {
 
 void Draw() {
 	system("clear");
-	for (int i = 0; i < width + 2; ++i) {
+	for (int i = 0; i < width + 2; ++i) 
 		std::cout << "#";
-	}
 	std::cout << std::endl; 
+	
 
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
 			if (j == 0) {
 				std::cout << "#";
 			}
-			if (i == y && j == x) {
-				std::cout << "0";
-			}
-			else if (i == fruitY && j == fruitX) {
+			if (i == y && j == x) 
+				std::cout << "O";
+			else if (i == fruitY && j == fruitX) 
 				std::cout << "F";
-			} 
 			else {
 				bool print = false;
 				for (int k =0; k < nTail ; ++k) {
@@ -56,7 +54,7 @@ void Draw() {
 			}
 			if (j == width -1) {
 				std::cout << "#";
-			} 
+			} 	
 		}
 		std::cout << std::endl;
 	}
@@ -96,6 +94,8 @@ void Input () {
         dir = DOWN;
     else if (ch == 'q')
         gameOver = true;
+	  else if (ch == 'p')
+			  dir = STOP;
 }
 
 void Logic() {
@@ -138,18 +138,16 @@ void Logic() {
 		if (tailX[i] == x && tailY[i] == y) {
 			gameOver = true;
 		}
-	
-		if (x == fruitX && y == fruitY) {
-			std::cout << "clicked" << std::endl;
-			score += 10;
-			fruitX = rand() % width; 
-			fruitY = rand() % height; 
-			nTail++;
-		}
+	}
+	if (x == fruitX && y == fruitY) {
+		score += 10;
+		fruitX = rand() % width; 
+		fruitY = rand() % height; 
+		nTail++;
 	}
 }
 
-int main () {
+int main (void) {
 	Setup();
 	while (!gameOver) {
 		Draw();

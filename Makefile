@@ -22,7 +22,7 @@ TARGET := bin/snake-life
 
 # Main target
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) -lncurses -ltinfo -pthread
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) -pthread
 
 # Rule to compile source files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
